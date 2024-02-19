@@ -1,0 +1,7 @@
+{
+	"name": "AzureFunction835",
+	"properties": {
+		"privateLinkResourceId": "/subscriptions/46934691-fbae-44fe-abb8-900c33ca8095/resourceGroups/gpg_fn_app_rg/providers/Microsoft.Web/sites/gpg-fn",
+		"groupId": "sites"
+	}
+}
