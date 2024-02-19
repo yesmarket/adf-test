@@ -1,0 +1,7 @@
+{
+	"name": "AzureBlobStorage452",
+	"properties": {
+		"privateLinkResourceId": "/subscriptions/46934691-fbae-44fe-abb8-900c33ca8095/resourceGroups/gpg_fn_app_rg/providers/Microsoft.Storage/storageAccounts/gpg",
+		"groupId": "blob"
+	}
+}
