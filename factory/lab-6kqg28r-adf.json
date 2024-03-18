@@ -1,0 +1,9 @@
+{
+	"name": "lab-6kqg28r-adf",
+	"location": "australiaeast",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "6e5f1fc3-ebd8-4cc0-8943-85bb63cd7058",
+		"tenantId": "f36345b5-4c52-46d7-a323-aae46db9d7d1"
+	}
+}
