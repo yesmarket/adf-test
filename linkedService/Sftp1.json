@@ -4,12 +4,12 @@
 		"annotations": [],
 		"type": "Sftp",
 		"typeProperties": {
-			"host": "lab6kqg28rsa.blob.core.windows.net",
+			"host": "labqa2njossa.blob.core.windows.net",
 			"port": 22,
 			"skipHostKeyValidation": false,
 			"hostKeyFingerprint": "ecdsa-sha2-nistp256 256 33:d3:f5:6a:8d:b6:06:1c:d1:d8:92:c9:52:8e:6a:58",
 			"authenticationType": "SshPublicKey",
-			"userName": "lab6kqg28rsa.sftp.ryanbartsch",
+			"userName": "labqa2njossa.sfpt.ryanbartsch",
 			"privateKeyContent": {
 				"type": "AzureKeyVaultSecret",
 				"store": {
