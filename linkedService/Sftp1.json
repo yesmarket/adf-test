@@ -9,7 +9,7 @@
 			"skipHostKeyValidation": false,
 			"hostKeyFingerprint": "ecdsa-sha2-nistp256 256 33:d3:f5:6a:8d:b6:06:1c:d1:d8:92:c9:52:8e:6a:58",
 			"authenticationType": "SshPublicKey",
-			"userName": "labqa2njossa.sfpt.ryanbartsch",
+			"userName": "labqa2njossa.sftp.ryanbartsch",
 			"privateKeyContent": {
 				"type": "AzureKeyVaultSecret",
 				"store": {
