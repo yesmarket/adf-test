@@ -7,9 +7,29 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "lab-6kqg28r-adf"
 		},
+		"Sftp1_passPhrase": {
+			"type": "secureString",
+			"metadata": "Secure string for 'passPhrase' of 'Sftp1'"
+		},
 		"AzureKeyVault1_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://lab-6kqg28r-kv.vault.azure.net/"
+		},
+		"Sftp1_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "lab6kqg28rsa.blob.core.windows.net"
+		},
+		"Sftp1_properties_typeProperties_hostKeyFingerprint": {
+			"type": "string",
+			"defaultValue": "ecdsa-sha2-nistp256 256 33:d3:f5:6a:8d:b6:06:1c:d1:d8:92:c9:52:8e:6a:58"
+		},
+		"Sftp1_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "lab6kqg28rsa.sftp.ryanbartsch"
+		},
+		"RestService1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://9824-193-115-67-46.ngrok-free.app"
 		},
 		"containerUri": {
 			"type": "string",
@@ -38,8 +58,23 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
+					"Sftp1_passPhrase": {
+						"value": "[parameters('Sftp1_passPhrase')]"
+					},
 					"AzureKeyVault1_properties_typeProperties_baseUrl": {
 						"value": "[parameters('AzureKeyVault1_properties_typeProperties_baseUrl')]"
+					},
+					"RestService1_properties_typeProperties_url": {
+						"value": "[parameters('RestService1_properties_typeProperties_url')]"
+					},
+					"Sftp1_properties_typeProperties_host": {
+						"value": "[parameters('Sftp1_properties_typeProperties_host')]"
+					},
+					"Sftp1_properties_typeProperties_hostKeyFingerprint": {
+						"value": "[parameters('Sftp1_properties_typeProperties_hostKeyFingerprint')]"
+					},
+					"Sftp1_properties_typeProperties_userName": {
+						"value": "[parameters('Sftp1_properties_typeProperties_userName')]"
 					}
 				}
 			},
