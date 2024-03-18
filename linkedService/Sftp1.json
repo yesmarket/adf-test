@@ -1,6 +1,5 @@
 {
 	"name": "Sftp1",
-	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
 		"annotations": [],
 		"type": "Sftp",
@@ -20,9 +19,14 @@
 				"secretName": "ssh-private-key"
 			},
 			"passPhrase": {
-				"type": "SecureString",
-				"value": "**********"
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "AzureKeyVault1",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "ssh-private-key-passphrase"
 			}
 		}
-	}
+	},
+	"type": "Microsoft.DataFactory/factories/linkedservices"
 }
