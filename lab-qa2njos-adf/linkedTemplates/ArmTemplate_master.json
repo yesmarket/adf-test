@@ -9,7 +9,7 @@
 		},
 		"AzureKeyVault1_properties_typeProperties_baseUrl": {
 			"type": "string",
-			"defaultValue": "https://lab-6kqg28r-kv.vault.azure.net/"
+			"defaultValue": "https://lab-qa2njos-kv.vault.azure.net/"
 		},
 		"RestService1_properties_typeProperties_url": {
 			"type": "string",
@@ -17,7 +17,7 @@
 		},
 		"Sftp1_properties_typeProperties_host": {
 			"type": "string",
-			"defaultValue": "lab6kqg28rsa.blob.core.windows.net"
+			"defaultValue": "labqa2njossa.blob.core.windows.net"
 		},
 		"Sftp1_properties_typeProperties_hostKeyFingerprint": {
 			"type": "string",
@@ -25,7 +25,7 @@
 		},
 		"Sftp1_properties_typeProperties_userName": {
 			"type": "string",
-			"defaultValue": "lab6kqg28rsa.sftp.ryanbartsch"
+			"defaultValue": "labqa2njossa.sftp.ryanbartsch"
 		},
 		"containerUri": {
 			"type": "string",
