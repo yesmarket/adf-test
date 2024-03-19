@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy data1",
+				"name": "GPG encrypt and SFTP to ANZ",
 				"type": "Copy",
 				"dependsOn": [
 					{
@@ -26,6 +26,12 @@
 					},
 					{
 						"activity": "Retrieve ANZ GPG public key from vault",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Retrieve GPG function app key from vault",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -77,7 +83,10 @@
 						"referenceName": "Binary1",
 						"type": "DatasetReference",
 						"parameters": {
-							"code": "test"
+							"code": {
+								"value": "@activity('Retrieve GPG function app key from vault').output.value",
+								"type": "Expression"
+							}
 						}
 					}
 				],
@@ -175,6 +184,30 @@
 				"typeProperties": {
 					"method": "GET",
 					"url": "https://9824-193-115-67-46.ngrok-free.app/"
+				}
+			},
+			{
+				"name": "Retrieve GPG function app key from vault",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "GET",
+					"url": {
+						"value": "@concat('https://', variables('key_vault_subdomain'), '.vault.azure.net/secrets/gpg-function-app-key?api-version=7.0')",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
 				}
 			}
 		],
