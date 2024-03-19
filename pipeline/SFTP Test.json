@@ -56,7 +56,7 @@
 								"type": "Expression"
 							},
 							"requestBody": {
-								"value": "@concat('{ \"PublicEncryptionKeyBase64Encoded\": \"', activity('Retrieve ANZ GPG public key from vault').output.value, '\", \"PrivateSigningKeyBase64Encoded\": \"', activity('Retrieve Humm GPG private key from vault').output.value, '\", \"PrivateSigningKeyPassphrase\": \"', activity('Retrieve Humm GPG private key passphrase from vault').output.value, '\", \"Base64EncodedPayload\": \"', base64(activity('Retrieve bank data').output.value), '\", \"Base64EncodeResponse\": true }')",
+								"value": "@concat('{ \"PublicEncryptionKeyBase64Encoded\": \"', activity('Retrieve ANZ GPG public key from vault').output.value, '\", \"PrivateSigningKeyBase64Encoded\": \"', activity('Retrieve Humm GPG private key from vault').output.value, '\", \"PrivateSigningKeyPassphrase\": \"', activity('Retrieve Humm GPG private key passphrase from vault').output.value, '\", \"Base64EncodedPayload\": \"', base64(activity('Retrieve bank data').output), '\", \"Base64EncodeResponse\": true }')",
 								"type": "Expression"
 							},
 							"requestTimeout": ""
