@@ -66,21 +66,18 @@
 						}
 					},
 					"sink": {
-						"type": "JsonSink",
+						"type": "BinarySink",
 						"storeSettings": {
 							"type": "SftpWriteSettings",
 							"operationTimeout": "01:00:00",
 							"useTempFileRename": false
-						},
-						"formatSettings": {
-							"type": "JsonWriteSettings"
 						}
 					},
 					"enableStaging": false
 				},
 				"inputs": [
 					{
-						"referenceName": "Binary1",
+						"referenceName": "Gpg",
 						"type": "DatasetReference",
 						"parameters": {
 							"code": {
@@ -92,7 +89,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "Json1",
+						"referenceName": "data1",
 						"type": "DatasetReference"
 					}
 				]
