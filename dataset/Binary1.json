@@ -1,0 +1,25 @@
+{
+	"name": "Binary1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Gpg1",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"code": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation",
+				"relativeUrl": {
+					"value": "@concat('/api/PgpEncryptAndSign?code=', dataset().code)",
+					"type": "Expression"
+				}
+			}
+		}
+	}
+}

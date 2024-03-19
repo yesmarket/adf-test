@@ -5,7 +5,32 @@
 			{
 				"name": "Copy data1",
 				"type": "Copy",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Retrieve bank data",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Retrieve Humm GPG private key passphrase from vault",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Retrieve Humm GPG private key from vault",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Retrieve ANZ GPG public key from vault",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -16,12 +41,22 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "RestSource",
-						"httpRequestTimeout": "00:01:40",
-						"requestInterval": "00.00:00:00.010",
-						"requestMethod": "GET",
-						"paginationRules": {
-							"supportRFC5988": "true"
+						"type": "BinarySource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "POST",
+							"additionalHeaders": {
+								"value": "Content-Type: application/json",
+								"type": "Expression"
+							},
+							"requestBody": {
+								"value": "@concat('{ \"PublicEncryptionKeyBase64Encoded\": \"', activity('Retrieve ANZ GPG public key from vault').output.value, '\", \"PrivateSigningKeyBase64Encoded\": \"', activity('Retrieve Humm GPG private key from vault').output.value, '\", \"PrivateSigningKeyPassphrase\": \"', activity('Retrieve Humm GPG private key passphrase from vault').output.value, '\", \"Base64EncodedPayload\": \"', base64(activity('Retrieve bank data').output.value), '\", \"Base64EncodeResponse\": true }')",
+								"type": "Expression"
+							},
+							"requestTimeout": ""
+						},
+						"formatSettings": {
+							"type": "BinaryReadSettings"
 						}
 					},
 					"sink": {
@@ -39,8 +74,11 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "RestResource1",
-						"type": "DatasetReference"
+						"referenceName": "Binary1",
+						"type": "DatasetReference",
+						"parameters": {
+							"code": "test"
+						}
 					}
 				],
 				"outputs": [
