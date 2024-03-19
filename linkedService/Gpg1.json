@@ -1,0 +1,12 @@
+{
+	"name": "Gpg1",
+	"properties": {
+		"annotations": [],
+		"type": "HttpServer",
+		"typeProperties": {
+			"url": "https://lab-qx2njos-gpg.azurewebsites.net",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "Anonymous"
+		}
+	}
+}
