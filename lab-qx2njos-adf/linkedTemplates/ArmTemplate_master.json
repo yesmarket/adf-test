@@ -17,7 +17,7 @@
 		},
 		"Sftp1_properties_typeProperties_host": {
 			"type": "string",
-			"defaultValue": "labqa2njossa.blob.core.windows.net"
+			"defaultValue": "labqx2njossa.blob.core.windows.net"
 		},
 		"Sftp1_properties_typeProperties_hostKeyFingerprint": {
 			"type": "string",
@@ -25,7 +25,7 @@
 		},
 		"Sftp1_properties_typeProperties_userName": {
 			"type": "string",
-			"defaultValue": "labqa2njossa.sftp.ryanbartsch"
+			"defaultValue": "labqx2njossa.sftp.ryanbartsch"
 		},
 		"containerUri": {
 			"type": "string",
