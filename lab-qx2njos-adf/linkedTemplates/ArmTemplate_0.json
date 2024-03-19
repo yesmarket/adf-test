@@ -15,6 +15,10 @@
 			"type": "string",
 			"defaultValue": "https://9824-193-115-67-46.ngrok-free.app"
 		},
+		"Gpg1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://lab-qx2njos-gpg.azurewebsites.net"
+		},
 		"Sftp1_properties_typeProperties_host": {
 			"type": "string",
 			"defaultValue": "labqx2njossa.blob.core.windows.net"
@@ -26,6 +30,10 @@
 		"Sftp1_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "labqx2njossa.sftp.ryanbartsch"
+		},
+		"AzureFunction1_properties_typeProperties_functionAppUrl": {
+			"type": "string",
+			"defaultValue": "https://lab-qx2njos-gpg.azurewebsites.net"
 		}
 	},
 	"variables": {
@@ -54,6 +62,21 @@
 				"type": "RestService",
 				"typeProperties": {
 					"url": "[parameters('RestService1_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Gpg1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "HttpServer",
+				"typeProperties": {
+					"url": "[parameters('Gpg1_properties_typeProperties_url')]",
 					"enableServerCertificateValidation": true,
 					"authenticationType": "Anonymous"
 				}
@@ -115,7 +138,79 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Json1')]",
+			"name": "[concat(parameters('factoryName'), '/AzureFunction1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"parameters": {
+					"PublicEncryptionKeyBase64Encoded": {
+						"type": "string"
+					},
+					"PrivateSigningKeyBase64Encoded": {
+						"type": "string"
+					},
+					"PrivateSigningKeyPassphrase": {
+						"type": "string"
+					},
+					"Base64EncodedPayload": {
+						"type": "string"
+					},
+					"Base64EncodeResponse": {
+						"type": "bool",
+						"defaultValue": true
+					}
+				},
+				"annotations": [],
+				"type": "AzureFunction",
+				"typeProperties": {
+					"functionAppUrl": "[parameters('AzureFunction1_properties_typeProperties_functionAppUrl')]",
+					"functionKey": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "AzureKeyVault1",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "gpg-function-app-key"
+					},
+					"authentication": "Anonymous"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureKeyVault1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Gpg')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Gpg1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"code": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation",
+						"relativeUrl": {
+							"value": "@concat('/api/PgpEncryptAndSign?code=', dataset().code)",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Gpg1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/data1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -124,23 +219,12 @@
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
-				"type": "Json",
+				"type": "Binary",
 				"typeProperties": {
 					"location": {
 						"type": "SftpLocation",
-						"fileName": "test.json",
+						"fileName": "test.txt",
 						"folderPath": "/test"
-					}
-				},
-				"schema": {
-					"type": "object",
-					"properties": {
-						"firstName": {
-							"type": "string"
-						},
-						"surname": {
-							"type": "string"
-						}
 					}
 				}
 			},
@@ -155,9 +239,40 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Copy data1",
+						"name": "GPG encrypt and SFTP to ANZ",
 						"type": "Copy",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "Retrieve bank data",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Retrieve Humm GPG private key passphrase from vault",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Retrieve Humm GPG private key from vault",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Retrieve ANZ GPG public key from vault",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Retrieve GPG function app key from vault",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "0.12:00:00",
 							"retry": 0,
@@ -168,51 +283,187 @@
 						"userProperties": [],
 						"typeProperties": {
 							"source": {
-								"type": "RestSource",
-								"httpRequestTimeout": "00:01:40",
-								"requestInterval": "00.00:00:00.010",
-								"requestMethod": "GET",
-								"paginationRules": {
-									"supportRFC5988": "true"
+								"type": "BinarySource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "POST",
+									"additionalHeaders": {
+										"value": "Content-Type: application/json",
+										"type": "Expression"
+									},
+									"requestBody": {
+										"value": "@concat('{ \"PublicEncryptionKeyBase64Encoded\": \"', activity('Retrieve ANZ GPG public key from vault').output.value, '\", \"PrivateSigningKeyBase64Encoded\": \"', activity('Retrieve Humm GPG private key from vault').output.value, '\", \"PrivateSigningKeyPassphrase\": \"', activity('Retrieve Humm GPG private key passphrase from vault').output.value, '\", \"Base64EncodedPayload\": \"', base64(activity('Retrieve bank data').output), '\", \"Base64EncodeResponse\": true }')",
+										"type": "Expression"
+									},
+									"requestTimeout": ""
+								},
+								"formatSettings": {
+									"type": "BinaryReadSettings"
 								}
 							},
 							"sink": {
-								"type": "JsonSink",
+								"type": "BinarySink",
 								"storeSettings": {
 									"type": "SftpWriteSettings",
 									"operationTimeout": "01:00:00",
 									"useTempFileRename": false
-								},
-								"formatSettings": {
-									"type": "JsonWriteSettings"
 								}
 							},
 							"enableStaging": false
 						},
 						"inputs": [
 							{
-								"referenceName": "RestResource1",
+								"referenceName": "Gpg",
 								"type": "DatasetReference",
-								"parameters": {}
+								"parameters": {
+									"code": {
+										"value": "@activity('Retrieve GPG function app key from vault').output.value",
+										"type": "Expression"
+									}
+								}
 							}
 						],
 						"outputs": [
 							{
-								"referenceName": "Json1",
+								"referenceName": "data1",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
 						]
+					},
+					{
+						"name": "Retrieve ANZ GPG public key from vault",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {},
+							"url": {
+								"value": "@concat('https://', variables('key_vault_subdomain'), '.vault.azure.net/secrets/anz-gpg-public-key?api-version=7.0')",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
+							}
+						}
+					},
+					{
+						"name": "Retrieve Humm GPG private key from vault",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {},
+							"url": {
+								"value": "@concat('https://', variables('key_vault_subdomain'), '.vault.azure.net/secrets/humm-gpg-private-key?api-version=7.0')",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
+							}
+						}
+					},
+					{
+						"name": "Retrieve Humm GPG private key passphrase from vault",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {},
+							"url": {
+								"value": "@concat('https://', variables('key_vault_subdomain'), '.vault.azure.net/secrets/humm-gpg-private-key-passphrase?api-version=7.0')",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
+							}
+						}
+					},
+					{
+						"name": "Retrieve bank data",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {},
+							"url": "https://9824-193-115-67-46.ngrok-free.app/"
+						}
+					},
+					{
+						"name": "Retrieve GPG function app key from vault",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {},
+							"url": {
+								"value": "@concat('https://', variables('key_vault_subdomain'), '.vault.azure.net/secrets/gpg-function-app-key?api-version=7.0')",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
+							}
+						}
 					}
 				],
 				"policy": {
 					"elapsedTimeMetric": {}
 				},
+				"variables": {
+					"key_vault_subdomain": {
+						"type": "String",
+						"defaultValue": "lab-qx2njos-kv"
+					}
+				},
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/RestResource1')]",
-				"[concat(variables('factoryId'), '/datasets/Json1')]"
+				"[concat(variables('factoryId'), '/datasets/Gpg')]",
+				"[concat(variables('factoryId'), '/datasets/data1')]"
 			]
 		}
 	]

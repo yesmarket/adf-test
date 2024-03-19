@@ -20,6 +20,12 @@
 		"Sftp1_properties_typeProperties_userName": {
 			"value": "labqx2njossa.sftp.ryanbartsch"
 		},
+		"AzureFunction1_properties_typeProperties_functionAppUrl": {
+			"value": "https://lab-qx2njos-gpg.azurewebsites.net"
+		},
+		"Gpg1_properties_typeProperties_url": {
+			"value": "https://lab-qx2njos-gpg.azurewebsites.net"
+		},
 		"containerUri": {
 			"value": ""
 		},
