@@ -1,0 +1,24 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "lab-qx2njos-adf"
+		},
+		"AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"value": "https://lab-qx2njos-kv.vault.azure.net/"
+		},
+		"RestService1_properties_typeProperties_url": {
+			"value": "https://9824-193-115-67-46.ngrok-free.app"
+		},
+		"Sftp1_properties_typeProperties_host": {
+			"value": "labqa2njossa.blob.core.windows.net"
+		},
+		"Sftp1_properties_typeProperties_hostKeyFingerprint": {
+			"value": "ecdsa-sha2-nistp256 256 33:d3:f5:6a:8d:b6:06:1c:d1:d8:92:c9:52:8e:6a:58"
+		},
+		"Sftp1_properties_typeProperties_userName": {
+			"value": "labqa2njossa.sftp.ryanbartsch"
+		}
+	}
+}
