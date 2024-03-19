@@ -1,0 +1,37 @@
+{
+	"name": "AzureFunction1",
+	"properties": {
+		"parameters": {
+			"PublicEncryptionKeyBase64Encoded": {
+				"type": "string"
+			},
+			"PrivateSigningKeyBase64Encoded": {
+				"type": "string"
+			},
+			"PrivateSigningKeyPassphrase": {
+				"type": "string"
+			},
+			"Base64EncodedPayload": {
+				"type": "string"
+			},
+			"Base64EncodeResponse": {
+				"type": "bool",
+				"defaultValue": true
+			}
+		},
+		"annotations": [],
+		"type": "AzureFunction",
+		"typeProperties": {
+			"functionAppUrl": "https://lab-qx2njos-gpg.azurewebsites.net",
+			"functionKey": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "AzureKeyVault1",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "gpg-function-app-key"
+			},
+			"authentication": "Anonymous"
+		}
+	}
+}
